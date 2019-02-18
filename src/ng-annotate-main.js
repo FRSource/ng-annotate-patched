@@ -608,7 +608,7 @@ function judgeSuspects(ctx) {
             removeArray(target, fragments);
         } else if (["add", "rebuild"].includes(mode) && isFunctionExpressionWithArgs(target)) {
             insertArray(ctx, target, target, fragments, quot);
-        } else if (["add", "rebuild"].includes(mode) && isClassExpression(target) && (constructor = findClassConstructorWithArgs(target))) {
+        } else if (["add", "rebuild"].includes(mode) && isClassExpression(target) && (constructor = findClassConstructorWithArgs(target)) && target.id === null) {
             insertArray(ctx, constructor.value, target, fragments, quot);
         } else if (isGenericProviderName(target)) {
             renameProviderDeclarationSite(ctx, target, fragments);
@@ -793,6 +793,21 @@ function judgeInjectArraySuspect(node, ctx) {
         }
         declaratorName = node.id.name;
         node = node.init; // var foo = ___;
+    } else if(isClassExpression(node)) {
+        if (onode === null) {
+          onode = node;
+          while (!["Program", "BlockStatement"].includes(onode.$parent.type)) {
+            onode = onode.$parent;
+
+            if (declaratorName === null) {
+              if (onode.type === "VariableDeclarator") {
+                declaratorName = onode.id.name;
+              } else if (onode.type === "AssignmentExpression") {
+                declaratorName = ctx.srcForRange(onode.left.range);
+              }
+            }
+          }
+        }
     } else if (onode === null) {
         onode = node;
     }
@@ -821,7 +836,8 @@ function judgeInjectArraySuspect(node, ctx) {
         // /*@ngInject*/ class Foo { constructor($scope) {} }
         // /*@ngInject*/ Foo = class { constructor($scope) {} }
 
-        const className = node.id ? node.id.name : declaratorName;
+        const className = isClassExpression(node) && declaratorName !== null ? declaratorName : node.id ? node.id.name : declaratorName;
+
         assert(className);
 
         addRemoveInjectArray(
@@ -847,6 +863,7 @@ function judgeInjectArraySuspect(node, ctx) {
         // var x = 1, y = function(a,b) {}, z;
 
         assert(declaratorName);
+
         addRemoveInjectArray(
             node.params,
             isSemicolonTerminated ? insertPos : {
@@ -868,6 +885,7 @@ function judgeInjectArraySuspect(node, ctx) {
         // /*@ngInject*/ foo.bar[0] = function($scope) {}
 
         const name = ctx.srcForRange(node.expression.left.range);
+
         addRemoveInjectArray(
             node.expression.right.params,
             isSemicolonTerminated ? insertPos : {
@@ -880,7 +898,6 @@ function judgeInjectArraySuspect(node, ctx) {
         // node was a reference and followed node now is either a
         // FunctionDeclaration or a VariableDeclarator
         // => recurse
-
         judgeInjectArraySuspect(node, ctx);
     }
 
@@ -902,6 +919,7 @@ function judgeInjectArraySuspect(node, ctx) {
         let foundSuspectInBody = false;
         let existingExpressionStatementWithArray = null;
         let nodeAfterExtends = null;
+
         onode.$parent.body.forEach(function(bnode, idx) {
             if (bnode === onode) {
                 foundSuspectInBody = true;
@@ -924,6 +942,7 @@ function judgeInjectArraySuspect(node, ctx) {
                 }
             }
         });
+
         assert(foundSuspectInBody);
         if (onode.type === "FunctionDeclaration") {
             if (!nodeAfterExtends) {

@@ -76,4 +76,59 @@
             "ngInject";
         }
     };
+
+    let ClassTest4_var = class ClassTest4{
+        constructor($log) {}
+    };
+    /** @ngInject */
+    let ClassTest4_noargs_var = class ClassTest4_noargs {
+        constructor() {}
+    };
+    /** @ngInject */
+    let ClassTest4_annotated_var = class ClassTest4_annotated {
+        constructor($log) {}
+    };
+    let ClassTest4_annotated_expression_var = /** @ngInject */ class ClassTest4_annotated_expression {
+        constructor($log) {}
+    };
+    let ClassTest4_annotated_constructor_var = class ClassTest4_annotated_constructor {
+        /** @ngInject */
+        constructor($log) {}
+    };
+    let ClassTest4_prologue_directive_var = class ClassTest4_prologue_directive {
+        constructor($log) {
+            "ngInject";
+        }
+    };
+
+    let ClassTest5_var,
+        ClassTest5_noargs_var,
+        ClassTest5_annotated_var,
+        ClassTest5_annotated_expression_var,
+        ClassTest5_annotated_constructor_var,
+        ClassTest5_prologue_directive_var;
+
+    ClassTest5_var = class ClassTest5 {
+        constructor($log) {}
+    };
+    /** @ngInject */
+    ClassTest5_noargs_var = class ClassTest5_noargs {
+        constructor() {}
+    };
+    /** @ngInject */
+    ClassTest5_annotated_var = class ClassTest5_annotated {
+        constructor($log) {}
+    };
+    ClassTest5_annotated_expression_var = /** @ngInject */ class ClassTest5_annotated_expression {
+        constructor($log) {}
+    };
+    ClassTest5_annotated_constructor_var = class ClassTest5_annotated_constructor {
+        /** @ngInject */
+        constructor($log) {}
+    };
+    ClassTest5_prologue_directive_var = class ClassTest5_prologue_directive {
+        constructor($log) {
+            "ngInject";
+        }
+    };
 })();

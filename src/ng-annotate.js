@@ -144,7 +144,7 @@ function runAnnotate(err, src) {
         if (filename !== "-") {
             config.map.inFile = filename;
         }
-    };
+    }
 
     if (config.enable && !Array.isArray(config.enable)) {
         config.enable = [config.enable];
