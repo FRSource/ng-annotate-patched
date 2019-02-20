@@ -131,4 +131,66 @@
             "ngInject";
         }
     };
+
+    let ClassTest6_var,
+        ClassTest6_noargs_var,
+        ClassTest6_annotated_var,
+        ClassTest6_annotated_expression_var,
+        ClassTest6_annotated_constructor_var,
+        ClassTest6_prologue_directive_var;
+
+    let ClassTest6_let = ClassTest6_var = class ClassTest6 {
+        constructor($log) {}
+    };
+    /** @ngInject */
+    let ClassTest6_noargs_let = ClassTest6_noargs_var = class ClassTest6_noargs {
+        constructor() {}
+    };
+    /** @ngInject */
+    let ClassTest6_annotated_let = ClassTest6_annotated_var = class ClassTest6_annotated {
+        constructor($log) {}
+    };
+    let ClassTest6_annotated_expression_let = ClassTest6_annotated_expression_var = /** @ngInject */ class ClassTest6_annotated_expression {
+        constructor($log) {}
+    };
+    let ClassTest6_annotated_constructor_let = ClassTest6_annotated_constructor_var = class ClassTest6_annotated_constructor {
+        /** @ngInject */
+        constructor($log) {}
+    };
+    let ClassTest6_prologue_directive_let = ClassTest6_prologue_directive_var = class ClassTest6_prologue_directive {
+        constructor($log) {
+            "ngInject";
+        }
+    };
+
+    let ClassTest7_var, ClassTest7_var_2,
+        ClassTest7_noargs_var, ClassTest7_noargs_var_2,
+        ClassTest7_annotated_var, ClassTest7_annotated_var_2,
+        ClassTest7_annotated_expression_var, ClassTest7_annotated_expression_var_2,
+        ClassTest7_annotated_constructor_var, ClassTest7_annotated_constructor_var_2,
+        ClassTest7_prologue_directive_var, ClassTest7_prologue_directive_var_2;
+
+    let ClassTest7_let = ClassTest7_var = ClassTest7_var_2 = class ClassTest7 {
+        constructor($log) {}
+    };
+    /** @ngInject */
+    let ClassTest7_noargs_let = ClassTest7_noargs_var = ClassTest7_noargs_var_2 = class ClassTest7_noargs {
+        constructor() {}
+    };
+    /** @ngInject */
+    let ClassTest7_annotated_let = ClassTest7_annotated_var = ClassTest7_annotated_var_2 = class ClassTest7_annotated {
+        constructor($log) {}
+    };
+    let ClassTest7_annotated_expression_let = ClassTest7_annotated_expression_var = ClassTest7_annotated_expression_var_2 = /** @ngInject */ class ClassTest7_annotated_expression {
+        constructor($log) {}
+    };
+    let ClassTest7_annotated_constructor_let = ClassTest7_annotated_constructor_var = ClassTest7_annotated_constructor_var_2 = class ClassTest7_annotated_constructor {
+        /** @ngInject */
+        constructor($log) {}
+    };
+    let ClassTest7_prologue_directive_let = ClassTest7_prologue_directive_var = ClassTest7_prologue_directive_var_2 = class ClassTest7_prologue_directive {
+        constructor($log) {
+            "ngInject";
+        }
+    };
 })();

@@ -791,21 +791,35 @@ function judgeInjectArraySuspect(node, ctx) {
         if (onode === null) {
             onode = node.$parent;
         }
-        declaratorName = node.id.name;
+        declaratorName = [node.id.name];
         node = node.init; // var foo = ___;
+
+        if (node !== null) {
+            while (node.type === "AssignmentExpression") {
+                declaratorName.push(node.left.name);
+                node = node.right;
+            }
+        }
     } else if(isClassExpression(node)) {
         if (onode === null) {
           onode = node;
+
+          const possibleDeclaratorNames = [];
+
           while (!["Program", "BlockStatement"].includes(onode.$parent.type)) {
             onode = onode.$parent;
 
             if (declaratorName === null) {
-              if (onode.type === "VariableDeclarator") {
-                declaratorName = onode.id.name;
-              } else if (onode.type === "AssignmentExpression") {
-                declaratorName = ctx.srcForRange(onode.left.range);
-              }
+                if (onode.type === "VariableDeclarator") {
+                    possibleDeclaratorNames.unshift(onode.id.name);
+                } else if (onode.type === "AssignmentExpression") {
+                    possibleDeclaratorNames.unshift(ctx.srcForRange(onode.left.range));
+                }
             }
+          }
+
+          if (possibleDeclaratorNames.length !== 0) {
+              declaratorName = possibleDeclaratorNames;
           }
         }
     } else if (onode === null) {
@@ -840,7 +854,7 @@ function judgeInjectArraySuspect(node, ctx) {
 
         assert(className);
 
-        addRemoveInjectArray(
+        addRemoveInjectArrays(
             constructor.value.params,
             insertPos,
             className);
@@ -851,7 +865,7 @@ function judgeInjectArraySuspect(node, ctx) {
 
         const className = ctx.srcForRange(node.expression.left.range);
 
-        addRemoveInjectArray(
+        addRemoveInjectArrays(
             constructor.value.params,
             isSemicolonTerminated ? insertPos : {
                 pos: node.expression.right.range[1],
@@ -864,7 +878,7 @@ function judgeInjectArraySuspect(node, ctx) {
 
         assert(declaratorName);
 
-        addRemoveInjectArray(
+        addRemoveInjectArrays(
             node.params,
             isSemicolonTerminated ? insertPos : {
                 pos: node.range[1],
@@ -875,7 +889,7 @@ function judgeInjectArraySuspect(node, ctx) {
     } else if (ctx.isFunctionDeclarationWithArgs(node)) {
         // /*@ngInject*/ function foo($scope) {}
 
-        addRemoveInjectArray(
+        addRemoveInjectArrays(
             node.params,
             insertPos,
             node.id.name);
@@ -886,7 +900,7 @@ function judgeInjectArraySuspect(node, ctx) {
 
         const name = ctx.srcForRange(node.expression.left.range);
 
-        addRemoveInjectArray(
+        addRemoveInjectArrays(
             node.expression.right.params,
             isSemicolonTerminated ? insertPos : {
                 pos: node.expression.right.range[1],
@@ -909,6 +923,14 @@ function judgeInjectArraySuspect(node, ctx) {
         for (; src[i] === " " || src[i] === "\t"; i++) {
         }
         return src.slice(lineStart, i);
+    }
+
+    function addRemoveInjectArrays(params, posAfterFunctionDeclaration, name) {
+        if (name instanceof Array) {
+            name.forEach(function (v) { addRemoveInjectArray(params, posAfterFunctionDeclaration, v)});
+        } else {
+            addRemoveInjectArray(params, posAfterFunctionDeclaration, name);
+        }
     }
 
     function addRemoveInjectArray(params, posAfterFunctionDeclaration, name) {
